@@ -7,9 +7,9 @@ namespace AgencyPI.Repository.IRepository
     {
         Customer GetCustomer(int customerId);
         List<Customer> GetCustomers();
-        bool CreateAgent(Customer customer);
-        bool UpdateAgent(Customer customer);
-        bool DeleteAgent(Customer customer);
+        bool CreateCustomer(Customer customer);
+        bool UpdateCustomer(Customer customer);
+        bool DeleteCustomer(Customer customer);
         List<Customer> GetCustomerInAgent(int agentId);
         bool CustomerExists(int customerId);
         bool Save();

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
 
@@ -6,24 +8,33 @@ namespace AgencyPI.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        public bool CreateAgent(Customer customer)
+        private readonly ApplicationDbContext _context;
+
+        public CustomerRepository(ApplicationDbContext context)
         {
-            throw new System.NotImplementedException();
+            _context = context;
+        }
+        public bool CreateCustomer(Customer customer)
+        {
+            _context.Customers.Add(customer);
+            return Save();
         }
 
         public bool CustomerExists(int customerId)
         {
-            throw new System.NotImplementedException();
+            bool exists = _context.Customers.Any(x => x.Id == customerId);
+            return exists;
         }
-
-        public bool DeleteAgent(Customer customer)
+        public bool DeleteCustomer(Customer customer)
         {
-            throw new System.NotImplementedException();
+            _context.Customers.Remove(customer);
+            return Save();
         }
 
         public Customer GetCustomer(int customerId)
         {
-            throw new System.NotImplementedException();
+            Customer customer = _context.Customers.FirstOrDefault(x => x.Id == customerId);
+            return customer;
         }
 
         public List<Customer> GetCustomerInAgent(int agentId)
@@ -33,17 +44,18 @@ namespace AgencyPI.Repository
 
         public List<Customer> GetCustomers()
         {
-            throw new System.NotImplementedException();
+            List<Customer> customers = _context.Customers.OrderBy(x => x.Name).ToList();
+            return customers;
         }
 
         public bool Save()
         {
-            throw new System.NotImplementedException();
+            return _context.SaveChanges() >= 0 ? true : false;
         }
-
-        public bool UpdateAgent(Customer customer)
+        public bool UpdateCustomer(Customer customer)
         {
-            throw new System.NotImplementedException();
+            _context.Customers.Update(customer);
+            return Save();
         }
     }
 }

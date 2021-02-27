@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
 
@@ -6,14 +8,23 @@ namespace AgencyPI.Repository
 {
     public class OrderRepository : IOrderRepository
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public OrderRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public bool CreateOrder(Order order)
         {
-            throw new System.NotImplementedException();
+            _context.Orders.Add(order);
+            return Save();
         }
 
         public bool DeleteOrder(Order order)
         {
-            throw new System.NotImplementedException();
+            _context.Orders.Remove(order);
+            return Save();
         }
 
         public List<Order> GetCustomerInAgent(int agentId)
@@ -28,27 +39,31 @@ namespace AgencyPI.Repository
 
         public Order GetOrder(int orderId)
         {
-            throw new System.NotImplementedException();
+            Order order = _context.Orders.FirstOrDefault(x => x.Id == orderId);
+            return order;
         }
 
         public List<Order> GetOrders()
         {
-            throw new System.NotImplementedException();
+            List<Order> orders = _context.Orders.OrderBy(x => x.Id).ToList();
+            return orders;
         }
 
         public bool OrderExists(int orderId)
         {
-            throw new System.NotImplementedException();
+            bool exists = _context.Orders.Any(x => x.Id == orderId);
+            return exists;
         }
 
         public bool Save()
         {
-            throw new System.NotImplementedException();
+            return _context.SaveChanges() >= 0 ? true : false;
         }
 
         public bool UpdateOrder(Order order)
         {
-            throw new System.NotImplementedException();
+            _context.Orders.Update(order);
+            return Save();
         }
     }
 }
