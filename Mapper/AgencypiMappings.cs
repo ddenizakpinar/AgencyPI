@@ -13,6 +13,7 @@ namespace AgencyPI.Mapper
             CreateMap<Customer, CustomerDto>().ReverseMap();
             CreateMap<Customer, CustomerCreateDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
+            CreateMap<Order, OrderCreateDto>().ReverseMap();
         }
     }
 }

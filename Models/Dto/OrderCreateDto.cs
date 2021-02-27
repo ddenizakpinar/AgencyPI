@@ -1,13 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AgencyPI.Models
+namespace AgencyPI.Models.Dto
 {
-    public class Order
+    public class OrderCreateDto
     {
-        [Key]
-        public int Id { get; set; }
         public int Amount { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
