@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgencyPI.Models
 {
-    public class Order
+    public class Order : DatedEntity
     {
         [Key]
         public int Id { get; set; }

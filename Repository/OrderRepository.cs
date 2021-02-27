@@ -3,6 +3,7 @@ using System.Linq;
 using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgencyPI.Repository
 {
@@ -39,7 +40,7 @@ namespace AgencyPI.Repository
 
         public Order GetOrder(int orderId)
         {
-            Order order = _context.Orders.FirstOrDefault(x => x.Id == orderId);
+            Order order = _context.Orders.AsNoTracking().FirstOrDefault(x => x.Id == orderId);
             return order;
         }
 

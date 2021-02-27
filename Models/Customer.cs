@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgencyPI.Models
 {
-    public class Customer
+    public class Customer : DatedEntity
     {
         [Key]
         public int Id { get; set; }

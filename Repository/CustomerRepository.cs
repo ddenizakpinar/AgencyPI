@@ -3,6 +3,7 @@ using System.Linq;
 using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgencyPI.Repository
 {
@@ -33,7 +34,7 @@ namespace AgencyPI.Repository
 
         public Customer GetCustomer(int customerId)
         {
-            Customer customer = _context.Customers.FirstOrDefault(x => x.Id == customerId);
+            Customer customer = _context.Customers.AsNoTracking().FirstOrDefault(x => x.Id == customerId);
             return customer;
         }
 

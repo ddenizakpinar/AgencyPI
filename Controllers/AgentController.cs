@@ -5,6 +5,7 @@ using AgencyPI.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace AgencyPI.Controllers
 {
@@ -67,7 +68,10 @@ namespace AgencyPI.Controllers
                 return BadRequest();
             }
 
+            Agent agentFromDb = _agentRepo.GetAgent(agentId);
+
             Agent agent = _mapper.Map<Agent>(agentDto);
+            agent.CreatedAt = agentFromDb.CreatedAt;
 
             if (!_agentRepo.UpdateAgent(agent))
             {

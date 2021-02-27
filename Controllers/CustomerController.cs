@@ -66,7 +66,10 @@ namespace AgencyPI.Controllers
                 return BadRequest();
             }
 
+            Customer customerFromDb = _customerRepo.GetCustomer(customerId);
+
             Customer customer = _mapper.Map<Customer>(customerDto);
+            customer.CreatedAt = customerFromDb.CreatedAt;
 
             if (!_customerRepo.UpdateCustomer(customer))
             {

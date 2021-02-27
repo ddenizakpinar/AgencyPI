@@ -66,7 +66,10 @@ namespace AgencyPI.Controllers
                 return BadRequest();
             }
 
+            Order OrderFromDb = _orderRepo.GetOrder(orderId);
+
             Order order = _mapper.Map<Order>(orderDto);
+            order.CreatedAt = OrderFromDb.CreatedAt;
 
             if (!_orderRepo.UpdateOrder(order))
             {
