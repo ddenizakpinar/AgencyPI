@@ -11,6 +11,7 @@ namespace AgencyPI.Repository.IRepository
         bool UpdateAgent(Customer customer);
         bool DeleteAgent(Customer customer);
         List<Customer> GetCustomerInAgent(int agentId);
+        bool CustomerExists(int customerId);
         bool Save();
     }
 }

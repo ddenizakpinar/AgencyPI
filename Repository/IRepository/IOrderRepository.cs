@@ -12,6 +12,7 @@ namespace AgencyPI.Repository.IRepository
         bool DeleteOrder(Order order);
         List<Order> GetCustomerInAgent(int agentId);
         List<Order> GetCustomerInCustomer(int customerId);
+        bool OrderExists(int orderId);
         bool Save();
     }
 }

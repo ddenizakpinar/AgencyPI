@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
 
@@ -6,19 +9,36 @@ namespace AgencyPI.Repository
 {
     public class AgentRepository : IAgentRepository
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public AgentRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public bool AgentExists(int agentId)
+        {
+            bool exists = _context.Agents.Any(x => x.Id == agentId);
+            return exists;
+        }
+
         public bool CreateAgent(Agent agent)
         {
-            throw new System.NotImplementedException();
+            _context.Agents.Add(agent);
+            return Save();
         }
 
         public bool DeleteAgent(Agent agent)
         {
-            throw new System.NotImplementedException();
+            _context.Agents.Remove(agent);
+            return Save();
         }
 
         public Agent GetAgent(int agentId)
         {
-            throw new System.NotImplementedException();
+            Agent agent = _context.Agents.FirstOrDefault(x => x.Id == agentId);
+            return agent;
         }
 
         public List<Agent> GetAgentInOrder(int orderId)
@@ -28,17 +48,19 @@ namespace AgencyPI.Repository
 
         public List<Agent> GetAgents()
         {
-            throw new System.NotImplementedException();
+            List<Agent> agents = _context.Agents.OrderBy(x => x.Name).ToList();
+            return agents;
         }
 
         public bool Save()
         {
-            throw new System.NotImplementedException();
+            return _context.SaveChanges() >= 0 ? true : false;
         }
 
         public bool UpdateAgent(Agent agent)
         {
-            throw new System.NotImplementedException();
+            _context.Agents.Update(agent);
+            return Save();
         }
     }
 }

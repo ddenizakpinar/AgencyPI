@@ -36,6 +36,11 @@ namespace AgencyPI.Repository
             throw new System.NotImplementedException();
         }
 
+        public bool OrderExists(int orderId)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public bool Save()
         {
             throw new System.NotImplementedException();

@@ -11,6 +11,11 @@ namespace AgencyPI.Repository
             throw new System.NotImplementedException();
         }
 
+        public bool CustomerExists(int customerId)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public bool DeleteAgent(Customer customer)
         {
             throw new System.NotImplementedException();
