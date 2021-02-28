@@ -40,7 +40,7 @@ namespace AgencyPI.Repository
 
         public Order GetOrder(int orderId)
         {
-            Order order = _context.Orders.AsNoTracking().FirstOrDefault(x => x.Id == orderId);
+            Order order = _context.Orders.FirstOrDefault(x => x.Id == orderId);
             return order;
         }
 

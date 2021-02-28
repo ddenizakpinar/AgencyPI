@@ -5,7 +5,7 @@ namespace AgencyPI.Repository.IRepository
 {
     public interface IAgentRepository
     {
-        Agent GetAgent(int agentId);
+        Agent GetAgent(int? agentId);
         List<Agent> GetAgents();
         bool CreateAgent(Agent agent);
         bool UpdateAgent(Agent agent);

@@ -18,7 +18,7 @@ namespace AgencyPI.Data
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
-        
+
         public override int SaveChanges()
         {
             var entries = ChangeTracker

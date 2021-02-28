@@ -5,7 +5,6 @@ namespace AgencyPI.Models.Dto
 {
     public class AgentDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string WorkingArea { get; set; }
         public int Commission { get; set; }

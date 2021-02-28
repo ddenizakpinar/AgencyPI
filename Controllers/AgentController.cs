@@ -14,11 +14,15 @@ namespace AgencyPI.Controllers
     public class AgentController : ControllerBase
     {
         private readonly IAgentRepository _agentRepo;
+        private readonly IOrderRepository _orderRepo;
+        private readonly ICustomerRepository _customerRepo;
         private readonly IMapper _mapper;
 
-        public AgentController(IAgentRepository agentRepo, IMapper mapper)
+        public AgentController(IAgentRepository agentRepo, IOrderRepository orderRepo, ICustomerRepository customerRepo, IMapper mapper)
         {
             _agentRepo = agentRepo;
+            _orderRepo = orderRepo;
+            _customerRepo = customerRepo;
             _mapper = mapper;
         }
 
@@ -38,47 +42,79 @@ namespace AgencyPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateAgent(AgentCreateDto agentCreateDto)
+        [HttpPut("{agentId:int}")]
+        public IActionResult CreateUpdateAgent(int? agentId, AgentDto agentDto)
         {
-            if (agentCreateDto == null)
-            {
-                return BadRequest();
-            }
 
-            Agent agent = _mapper.Map<Agent>(agentCreateDto);
+            Agent agent = null;
 
-            if (!_agentRepo.CreateAgent(agent))
-            {
-                return StatusCode(500);
-            }
-
-            return CreatedAtRoute(nameof(GetAgent), new { agentId = agent.Id }, agent);
-        }
-
-        [HttpPatch("{agentId:int}")]
-        public IActionResult UpdateAgent(int agentId, AgentDto agentDto)
-        {
             if (agentDto == null)
             {
                 return BadRequest();
             }
 
-            if (agentDto.Id != agentId)
+            if (agentId != null)
             {
-                return BadRequest();
+                agent = _agentRepo.GetAgent(agentId);
+                if (agent == null)
+                {
+                    return StatusCode(404);
+                }
+            }
+            else
+            {
+                agent = new Agent();
             }
 
-            Agent agentFromDb = _agentRepo.GetAgent(agentId);
+            List<Order> newOrders = new List<Order>();
 
-            Agent agent = _mapper.Map<Agent>(agentDto);
-            agent.CreatedAt = agentFromDb.CreatedAt;
-
-            if (!_agentRepo.UpdateAgent(agent))
+            if (agentDto.Orders != null)
             {
-                return StatusCode(500);
+                foreach (Order order in agentDto.Orders)
+                {
+                    if (order.Id > 0)
+                    {
+                        Order existingOrder = _orderRepo.GetOrder(order.Id);
+                        newOrders.Add(existingOrder);
+                    }
+                    else
+                    {
+                        newOrders.Add(order);
+                    }
+                }
+                agent.Orders = newOrders;
             }
 
-            return Ok(agent);
+            List<Customer> newCustomers = new List<Customer>();
+
+            if (agentDto.Customers != null)
+            {
+                foreach (Customer customer in agentDto.Customers)
+                {
+                    if (customer.Id > 0)
+                    {
+                        Customer existingCustomer = _customerRepo.GetCustomer(customer.Id);
+                        newCustomers.Add(existingCustomer);
+                    }
+                    else
+                    {
+                        newCustomers.Add(customer);
+                    }
+                }
+                agent.Customers = newCustomers;
+            }
+
+            agent.Name = agentDto.Name;
+            agent.Commission = agentDto.Commission;
+            agent.Country = agentDto.Country;
+            agent.PhoneNumber = agentDto.PhoneNumber;
+
+            if (agent.Id > 0 ? _agentRepo.UpdateAgent(agent) : _agentRepo.CreateAgent(agent))
+            {
+                return Ok(agent);
+            }
+            return StatusCode(500);
+
         }
 
         [HttpDelete("{agentId}")]

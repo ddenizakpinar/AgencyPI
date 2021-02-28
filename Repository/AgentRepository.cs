@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AgencyPI.Data;
 using AgencyPI.Models;
 using AgencyPI.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgencyPI.Repository
 {
@@ -35,9 +36,9 @@ namespace AgencyPI.Repository
             return Save();
         }
 
-        public Agent GetAgent(int agentId)
+        public Agent GetAgent(int? agentId)
         {
-            Agent agent = _context.Agents.FirstOrDefault(x => x.Id == agentId);
+            Agent agent = _context.Agents.Include(x => x.Orders).FirstOrDefault(x => x.Id == agentId);
             return agent;
         }
 
