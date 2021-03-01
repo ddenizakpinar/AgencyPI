@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgencyPI.Models.Dto
 {
-    public class OrderCreateDto
+    public class OrderCreateUpdateDto
     {
         public int Amount { get; set; }
         public DateTime Date { get; set; }

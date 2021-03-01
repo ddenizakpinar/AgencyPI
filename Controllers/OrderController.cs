@@ -12,14 +12,17 @@ namespace AgencyPI.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderRepository _orderRepo;
+        private readonly ICustomerRepository _customerRepo;
+        private readonly IAgentRepository _agentRepo;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderRepository orderRepo, IMapper mapper)
+        public OrderController(ICustomerRepository customerRepo, IAgentRepository agentRepo, IOrderRepository orderRepo, IMapper mapper)
         {
             _orderRepo = orderRepo;
+            _customerRepo = customerRepo;
+            _agentRepo = agentRepo;
             _mapper = mapper;
         }
-
 
         [HttpGet]
         public IActionResult GetOrders()
@@ -35,48 +38,61 @@ namespace AgencyPI.Controllers
             return Ok(order);
         }
 
-        [HttpPost]
-        public IActionResult CreateOrder(OrderCreateDto orderCreateDto)
+        [HttpGet("OrdersByCustomer/{customerId:int}")]
+        public IActionResult GetOrdersByCustomer(int customerId)
         {
-            if (orderCreateDto == null)
-            {
-                return BadRequest();
-            }
+            List<Order> orders = _orderRepo.GetOrdersByCustomer(customerId);
 
-            Order order = _mapper.Map<Order>(orderCreateDto);
-
-            if (!_orderRepo.CreateOrder(order))
-            {
-                return StatusCode(500);
-            }
-
-            return CreatedAtRoute(nameof(GetOrder), new { orderId = order.Id }, order);
+            return Ok(orders);
         }
 
-        [HttpPatch("{orderId:int}")]
-        public IActionResult UpdateOrder(int orderId, OrderDto orderDto)
+        [HttpPost]
+        [HttpPut("{orderId:int}")]
+        public IActionResult CreateUpdateOrder(int? orderId, OrderCreateUpdateDto orderCreateUpdateDto)
         {
-            if (orderDto == null)
+
+            Order order = null;
+
+            if (orderCreateUpdateDto == null)
             {
                 return BadRequest();
             }
 
-            if (orderDto.Id != orderId)
+            if (orderId != null)
             {
-                return BadRequest();
+                order = _orderRepo.GetOrder(orderId);
+
+                if (order == null)
+                {
+                    return StatusCode(404);
+                }
+            }
+            else
+            {
+                order = new Order();
             }
 
-            Order OrderFromDb = _orderRepo.GetOrder(orderId);
-
-            Order order = _mapper.Map<Order>(orderDto);
-            order.CreatedAt = OrderFromDb.CreatedAt;
-
-            if (!_orderRepo.UpdateOrder(order))
+            if (orderCreateUpdateDto.Customer != null)
             {
-                return StatusCode(500);
+                if (orderCreateUpdateDto.Customer.Id > 0)
+                {
+                    order.Customer = _customerRepo.GetCustomer(orderCreateUpdateDto.Customer.Id);
+                }
+                else
+                {
+                    order.Customer = orderCreateUpdateDto.Customer;
+                }
             }
 
-            return Ok(order);
+            order.Amount = orderCreateUpdateDto.Amount;
+            order.Description = orderCreateUpdateDto.Description;
+            order.Date = orderCreateUpdateDto.Date;
+
+            if (order.Id > 0 ? _orderRepo.UpdateOrder(order) : _orderRepo.CreateOrder(order))
+            {
+                return Ok(order);
+            }
+            return StatusCode(500);
         }
 
         [HttpDelete("{orderId}")]

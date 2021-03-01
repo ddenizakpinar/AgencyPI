@@ -10,7 +10,7 @@ namespace AgencyPI.Repository.IRepository
         bool CreateAgent(Agent agent);
         bool UpdateAgent(Agent agent);
         bool DeleteAgent(Agent agent);
-        List<Agent> GetAgentInOrder(int orderId);
+        List<Agent> GetAgentsByOrder(int orderId);
         bool AgentExists(int agentId);
         bool Save();
     }

@@ -26,7 +26,6 @@ namespace AgencyPI.Controllers
             _mapper = mapper;
         }
 
-
         [HttpGet]
         public IActionResult GetAgents()
         {
@@ -41,14 +40,21 @@ namespace AgencyPI.Controllers
             return Ok(agent);
         }
 
+        [HttpGet("AgentsByOrder/{orderId:int}")]
+        public IActionResult GetAgentsByOrder(int orderId)
+        {
+            List<Agent> agents = _agentRepo.GetAgentsByOrder(orderId);
+            return Ok(agents);
+        }
+
         [HttpPost]
         [HttpPut("{agentId:int}")]
-        public IActionResult CreateUpdateAgent(int? agentId, AgentDto agentDto)
+        public IActionResult CreateUpdateAgent(int? agentId, AgentCreateUpdateDto agentCreateUpdateDto)
         {
 
             Agent agent = null;
 
-            if (agentDto == null)
+            if (agentCreateUpdateDto == null)
             {
                 return BadRequest();
             }
@@ -68,9 +74,9 @@ namespace AgencyPI.Controllers
 
             List<Order> newOrders = new List<Order>();
 
-            if (agentDto.Orders != null)
+            if (agentCreateUpdateDto.Orders != null)
             {
-                foreach (Order order in agentDto.Orders)
+                foreach (Order order in agentCreateUpdateDto.Orders)
                 {
                     if (order.Id > 0)
                     {
@@ -87,9 +93,9 @@ namespace AgencyPI.Controllers
 
             List<Customer> newCustomers = new List<Customer>();
 
-            if (agentDto.Customers != null)
+            if (agentCreateUpdateDto.Customers != null)
             {
-                foreach (Customer customer in agentDto.Customers)
+                foreach (Customer customer in agentCreateUpdateDto.Customers)
                 {
                     if (customer.Id > 0)
                     {
@@ -104,17 +110,16 @@ namespace AgencyPI.Controllers
                 agent.Customers = newCustomers;
             }
 
-            agent.Name = agentDto.Name;
-            agent.Commission = agentDto.Commission;
-            agent.Country = agentDto.Country;
-            agent.PhoneNumber = agentDto.PhoneNumber;
+            agent.Name = agentCreateUpdateDto.Name;
+            agent.Commission = agentCreateUpdateDto.Commission;
+            agent.Country = agentCreateUpdateDto.Country;
+            agent.PhoneNumber = agentCreateUpdateDto.PhoneNumber;
 
             if (agent.Id > 0 ? _agentRepo.UpdateAgent(agent) : _agentRepo.CreateAgent(agent))
             {
                 return Ok(agent);
             }
             return StatusCode(500);
-
         }
 
         [HttpDelete("{agentId}")]

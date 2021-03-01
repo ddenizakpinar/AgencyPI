@@ -38,18 +38,21 @@ namespace AgencyPI.Repository
 
         public Agent GetAgent(int? agentId)
         {
-            Agent agent = _context.Agents.Include(x => x.Orders).FirstOrDefault(x => x.Id == agentId);
+            Agent agent = _context.Agents.Include(x => x.Orders).Include(x => x.Customers).FirstOrDefault(x => x.Id == agentId);
             return agent;
         }
 
-        public List<Agent> GetAgentInOrder(int orderId)
+        public List<Agent> GetAgentsByOrder(int orderId)
         {
-            throw new System.NotImplementedException();
+            List<Agent> agents = _context.Agents.Where(a => a.Orders.Any(o => o.Id == orderId)).Include(x => x.Orders).ToList();
+
+            return agents;
+
         }
 
         public List<Agent> GetAgents()
         {
-            List<Agent> agents = _context.Agents.OrderBy(x => x.Name).ToList();
+            List<Agent> agents = _context.Agents.Include(x => x.Orders).Include(x => x.Customers).OrderBy(x => x.Name).ToList();
             return agents;
         }
 

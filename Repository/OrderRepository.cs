@@ -28,25 +28,22 @@ namespace AgencyPI.Repository
             return Save();
         }
 
-        public List<Order> GetCustomerInAgent(int agentId)
+        public List<Order> GetOrdersByCustomer(int customerId)
         {
-            throw new System.NotImplementedException();
+            List<Order> orders = _context.Orders.Where(a => a.Customer.Id == customerId).Include(x => x.Customer).ToList();
+
+            return orders;
         }
 
-        public List<Order> GetCustomerInCustomer(int customerId)
+        public Order GetOrder(int? orderId)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Order GetOrder(int orderId)
-        {
-            Order order = _context.Orders.FirstOrDefault(x => x.Id == orderId);
+            Order order = _context.Orders.Include(x => x.Customer).FirstOrDefault(x => x.Id == orderId);
             return order;
         }
 
         public List<Order> GetOrders()
         {
-            List<Order> orders = _context.Orders.OrderBy(x => x.Id).ToList();
+            List<Order> orders = _context.Orders.Include(x => x.Customer).OrderBy(x => x.Id).ToList();
             return orders;
         }
 

@@ -32,20 +32,22 @@ namespace AgencyPI.Repository
             return Save();
         }
 
-        public Customer GetCustomer(int customerId)
+        public Customer GetCustomer(int? customerId)
         {
-            Customer customer = _context.Customers.AsNoTracking().FirstOrDefault(x => x.Id == customerId);
+            Customer customer = _context.Customers.Include(x => x.Orders).Include(x => x.Agent).FirstOrDefault(x => x.Id == customerId);
             return customer;
         }
 
-        public List<Customer> GetCustomerInAgent(int agentId)
+        public List<Customer> GetCustomersByAgent(int agentId)
         {
-            throw new System.NotImplementedException();
+            List<Customer> customers = _context.Customers.Where(a => a.Agent.Id == agentId).Include(x => x.Agent).ToList();
+
+            return customers;
         }
 
         public List<Customer> GetCustomers()
         {
-            List<Customer> customers = _context.Customers.OrderBy(x => x.Name).ToList();
+            List<Customer> customers = _context.Customers.Include(x => x.Orders).Include(x => x.Agent).OrderBy(x => x.Name).ToList();
             return customers;
         }
 

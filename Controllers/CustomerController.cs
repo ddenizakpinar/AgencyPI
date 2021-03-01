@@ -12,11 +12,16 @@ namespace AgencyPI.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerRepository _customerRepo;
+        private readonly IAgentRepository _agentRepo;
+        private readonly IOrderRepository _orderRepo;
+
         private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerRepository customerRepo, IMapper mapper)
+        public CustomerController(ICustomerRepository customerRepo, IAgentRepository agentRepo, IOrderRepository orderRepo, IMapper mapper)
         {
             _customerRepo = customerRepo;
+            _agentRepo = agentRepo;
+            _orderRepo = orderRepo;
             _mapper = mapper;
         }
 
@@ -35,48 +40,82 @@ namespace AgencyPI.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
-        public IActionResult CreateCustomer(CustomerCreateDto customerCreateDto)
+        [HttpGet("CustomersByAgent/{agentId:int}")]
+        public IActionResult GetCustomersByAgent(int agentId)
         {
-            if (customerCreateDto == null)
-            {
-                return BadRequest();
-            }
+            List<Customer> customers = _customerRepo.GetCustomersByAgent(agentId);
 
-            Customer customer = _mapper.Map<Customer>(customerCreateDto);
-
-            if (!_customerRepo.CreateCustomer(customer))
-            {
-                return StatusCode(500);
-            }
-
-            return CreatedAtRoute(nameof(GetCustomer), new { customerId = customer.Id }, customer);
+            return Ok(customers);
         }
 
-        [HttpPatch("{customerId:int}")]
-        public IActionResult UpdateCustomer(int customerId, CustomerDto customerDto)
+        [HttpPost]
+        [HttpPut("{customerId:int}")]
+        public IActionResult CreateUpdateCustomer(int? customerId, CustomerCreateUpdateDto customerCreateUpdateDto)
         {
-            if (customerDto == null)
+
+            Customer customer = null;
+
+            if (customerCreateUpdateDto == null)
             {
                 return BadRequest();
             }
 
-            if (customerDto.Id != customerId)
+            if (customerId != null)
             {
-                return BadRequest();
+                customer = _customerRepo.GetCustomer(customerId);
+
+                if (customer == null)
+                {
+                    return StatusCode(404);
+                }
+            }
+            else
+            {
+                customer = new Customer();
             }
 
-            Customer customerFromDb = _customerRepo.GetCustomer(customerId);
+            List<Order> newOrders = new List<Order>();
 
-            Customer customer = _mapper.Map<Customer>(customerDto);
-            customer.CreatedAt = customerFromDb.CreatedAt;
-
-            if (!_customerRepo.UpdateCustomer(customer))
+            if (customerCreateUpdateDto.Orders != null)
             {
-                return StatusCode(500);
+                foreach (Order order in customerCreateUpdateDto.Orders)
+                {
+                    if (order.Id > 0)
+                    {
+                        Order existingOrder = _orderRepo.GetOrder(order.Id);
+                        newOrders.Add(existingOrder);
+                    }
+                    else
+                    {
+                        newOrders.Add(order);
+                    }
+                }
+                customer.Orders = newOrders;
             }
 
-            return Ok(customer);
+            if (customerCreateUpdateDto.Agent != null)
+            {
+                if (customerCreateUpdateDto.Agent.Id > 0)
+                {
+                    customer.Agent = _agentRepo.GetAgent(customerCreateUpdateDto.Agent.Id);
+                }
+                else
+                {
+                    customer.Agent = customerCreateUpdateDto.Agent;
+                }
+            }
+
+            customer.Grade = customerCreateUpdateDto.Grade;
+            customer.City = customerCreateUpdateDto.City;
+            customer.Name = customerCreateUpdateDto.Name;
+            customer.PhoneNumber = customerCreateUpdateDto.PhoneNumber;
+            customer.WorkingArea = customerCreateUpdateDto.WorkingArea;
+
+            if (customer.Id > 0 ? _customerRepo.UpdateCustomer(customer) : _customerRepo.CreateCustomer(customer))
+            {
+                return Ok(customer);
+            }
+            return StatusCode(500);
         }
 
         [HttpDelete("{customerId}")]

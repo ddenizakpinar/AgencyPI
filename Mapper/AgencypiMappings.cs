@@ -12,14 +12,11 @@ namespace AgencyPI.Mapper
         {
             CreateMap<Agent, AgentDto>().ReverseMap();
             CreateMap<AgentDto, Agent>().ReverseMap();
-            CreateMap<Agent, AgentCreateDto>().ReverseMap();
+            CreateMap<Agent, AgentCreateUpdateDto>().ReverseMap();
             CreateMap<Customer, CustomerDto>().ReverseMap();
-            CreateMap<Customer, CustomerCreateDto>().ReverseMap();
+            CreateMap<Customer, CustomerCreateUpdateDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
-            CreateMap<Order, OrderCreateDto>().ReverseMap();
-
-            CreateMap<JsonPatchDocument<Agent>, JsonPatchDocument<AgentDto>>();
-            CreateMap<Operation<Agent>, Operation<AgentDto>>();
+            CreateMap<Order, OrderCreateUpdateDto>().ReverseMap();
         }
     }
 }
