@@ -9,3 +9,7 @@ ASP.NET Core Web Api project that simulates basic API scenario that supports all
 
 ### Database sample
 ![alt text](https://i.ibb.co/3hdkTzS/sample.png)
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
