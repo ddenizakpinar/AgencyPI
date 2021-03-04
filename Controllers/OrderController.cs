@@ -28,22 +28,32 @@ namespace AgencyPI.Controllers
         public IActionResult GetOrders()
         {
             List<Order> orders = _orderRepo.GetOrders();
-            return Ok(orders);
+            List<OrderDto> orderDto = new List<OrderDto>();
+            foreach (var order in orders)
+            {
+                orderDto.Add(_mapper.Map<OrderDto>(order));
+            }
+            return Ok(orderDto);
         }
 
         [HttpGet("{orderId:int}", Name = "GetOrder")]
         public IActionResult GetOrder(int orderId)
         {
             Order order = _orderRepo.GetOrder(orderId);
-            return Ok(order);
+            OrderDto orderDto = _mapper.Map<OrderDto>(order);
+            return Ok(orderDto);
         }
 
         [HttpGet("OrdersByCustomer/{customerId:int}")]
         public IActionResult GetOrdersByCustomer(int customerId)
         {
             List<Order> orders = _orderRepo.GetOrdersByCustomer(customerId);
-
-            return Ok(orders);
+            List<OrderDto> orderDto = new List<OrderDto>();
+            foreach (var order in orders)
+            {
+                orderDto.Add(_mapper.Map<OrderDto>(order));
+            }
+            return Ok(orderDto);
         }
 
         [HttpPost]

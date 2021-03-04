@@ -30,22 +30,32 @@ namespace AgencyPI.Controllers
         public IActionResult GetCustomers()
         {
             List<Customer> customers = _customerRepo.GetCustomers();
-            return Ok(customers);
+            List<CustomerDto> customersDto = new List<CustomerDto>();
+            foreach (var customer in customers)
+            {
+                customersDto.Add(_mapper.Map<CustomerDto>(customer));
+            }
+            return Ok(customersDto);
         }
 
         [HttpGet("{customerId:int}", Name = "GetCustomer")]
         public IActionResult GetCustomer(int customerId)
         {
             Customer customer = _customerRepo.GetCustomer(customerId);
-            return Ok(customer);
+            CustomerDto customerDto = _mapper.Map<CustomerDto>(customer);
+            return Ok(customerDto);
         }
 
         [HttpGet("CustomersByAgent/{agentId:int}")]
         public IActionResult GetCustomersByAgent(int agentId)
         {
             List<Customer> customers = _customerRepo.GetCustomersByAgent(agentId);
-
-            return Ok(customers);
+            List<CustomerDto> customersDto = new List<CustomerDto>();
+            foreach (var customer in customers)
+            {
+                customersDto.Add(_mapper.Map<CustomerDto>(customer));
+            }
+            return Ok(customersDto);
         }
 
         [HttpPost]

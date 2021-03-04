@@ -30,21 +30,33 @@ namespace AgencyPI.Controllers
         public IActionResult GetAgents()
         {
             List<Agent> agents = _agentRepo.GetAgents();
-            return Ok(agents);
+            List<AgentDto> agentsDto = new List<AgentDto>();
+            foreach (var agent in agents)
+            {
+                agentsDto.Add(_mapper.Map<AgentDto>(agent));
+            }
+            return Ok(agentsDto);
         }
 
         [HttpGet("{agentId:int}", Name = "GetAgent")]
         public IActionResult GetAgent(int agentId)
         {
             Agent agent = _agentRepo.GetAgent(agentId);
-            return Ok(agent);
+            AgentDto agentDto = _mapper.Map<AgentDto>(agent);
+            return Ok(agentDto);
         }
 
         [HttpGet("AgentsByOrder/{orderId:int}")]
         public IActionResult GetAgentsByOrder(int orderId)
         {
             List<Agent> agents = _agentRepo.GetAgentsByOrder(orderId);
-            return Ok(agents);
+
+            List<AgentDto> agentsDto = new List<AgentDto>();
+            foreach (var agent in agents)
+            {
+                agentsDto.Add(_mapper.Map<AgentDto>(agent));
+            }
+            return Ok(agentsDto);
         }
 
         [HttpPost]
